@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <MainMenu />
+    <!-- Show the menu only when the user is logged in and not on the login page -->
+    <MainMenu v-if="isLoggedIn && !isLoginPage" />
     <router-view />
   </div>
 </template>
@@ -10,11 +11,33 @@ import MainMenu from './components/MainMenu.vue';
 
 export default {
   components: {
-    MainMenu
-  }
+    MainMenu,
+  },
+  data() {
+    return {
+      isLoggedIn: false, // Default state for login
+      isLoginPage: false, // Track if the current route is login page
+    };
+  },
+  mounted() {
+    // Check if the user is logged in when the app is mounted
+    this.isLoggedIn = localStorage.getItem('loggedIn') === 'true';
+    this.checkIfLoginPage();
+  },
+  watch: {
+    // Watch route changes to update login page check
+    '$route'() {
+      this.checkIfLoginPage();
+    }
+  },
+  methods: {
+    // Check if the current route is the login page
+    checkIfLoginPage() {
+      this.isLoginPage = this.$route.path === '/login';
+    }
+  },
 };
 </script>
-
 
 <style>
 #app {
@@ -26,3 +49,9 @@ export default {
   margin-top: 60px;
 }
 </style>
+
+
+
+
+
+
