@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from '../components/Login.vue';
 import Rooms from '../components/Rooms.vue';
 import Dashboard from '../components/Dashboard.vue';
+import RoomForm from '../components/RoomForm.vue';
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -14,6 +15,16 @@ const routes = [
   { 
     path: '/dashboard', 
     component: Dashboard,
+    meta: { requiresAuth: true } // Require login
+  },
+  { 
+    path: '/rooms/create', 
+    component: RoomForm,
+    meta: { requiresAuth: true } // Require login
+  },
+  { 
+    path: '/rooms/edit/:id', 
+    component: RoomForm,
     meta: { requiresAuth: true } // Require login
   }
 ];
