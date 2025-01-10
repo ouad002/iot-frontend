@@ -51,23 +51,38 @@ export default {
         .then(response => {
           this.rooms = response.data;
           this.rooms.forEach(room => {
-            axios.get(`http://localhost:8000/sensor/data?room=${room.id}`, {
-              auth: {
-                username: 'admin',
-                password: 'password'
-              }
-            })
-              .then(sensorResponse => {
-                room.sensors = sensorResponse.data.filter(sensor => sensor.room === room.id);
-              })
-              .catch(error => {
-                console.error('Error fetching sensor data:', error);
-              });
+            this.fetchSensorData(room.id);
           });
         })
         .catch(error => {
           console.error('Error fetching room data:', error);
         });
+    },
+    fetchSensorData(roomId) {
+      axios.get(`http://localhost:8000/sensor/data?room=${roomId}`, {
+        auth: {
+          username: 'admin',
+          password: 'password'
+        }
+      })
+        .then(sensorResponse => {
+          const room = this.rooms.find(r => r.id === roomId);
+          if (room) {
+            room.sensors = this.getLatestSensorData(sensorResponse.data.filter(sensor => sensor.room === room.id));
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching sensor data:', error);
+        });
+    },
+    getLatestSensorData(sensorData) {
+      const latestSensorData = {};
+      sensorData.forEach(sensor => {
+        if (!latestSensorData[sensor.room] || sensor.id > latestSensorData[sensor.room].id) {
+          latestSensorData[sensor.room] = sensor;
+        }
+      });
+      return Object.values(latestSensorData);
     }
   }
 };
