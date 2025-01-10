@@ -2,20 +2,33 @@
   <div class="dashboard-container">
     <h2>Dashboard</h2>
     <p>View sensor data in real-time.</p>
-    <div v-for="room in rooms" :key="room.id" class="room-card">
-      <h3>Room {{ room.id }}: {{ room.name }}</h3>
-      <p><strong>Surface:</strong> {{ room.surface }} m²</p>
-      <p><strong>Windows:</strong> {{ room.windows }}</p>
-      <p><strong>Sensor:</strong> {{ room.sensor }}</p>
-      <ul class="sensor-list">
-        <li v-for="sensor in room.sensors" :key="sensor.id" class="sensor-item">
-          <p><strong>Room:</strong> {{ sensor.room }}</p>
-          <p><strong>Temperature:</strong> {{ sensor.temperature }} °C</p>
-          <p><strong>Humidity:</strong> {{ sensor.humidity }} %</p>
-          <p><strong>Pressure:</strong> {{ sensor.pressure }} hPa</p>
-          <p><strong>Luminosity:</strong> {{ sensor.luminosity }} lx</p>
-        </li>
-      </ul>
+    <div class="rooms-container">
+      <div v-for="room in rooms" :key="room.id" class="room-card">
+        <h3>Room {{ room.id }}: {{ room.name }}</h3>
+        <p><strong>Surface:</strong> {{ room.surface }} m²</p>
+        <p><strong>Windows:</strong> {{ room.windows }}</p>
+        <p><strong>Sensor:</strong> {{ room.sensor }}</p>
+        <ul class="sensor-list">
+          <li v-for="sensor in room.sensors" :key="sensor.id" class="sensor-item">
+            <div class="sensor-data">
+              <span class="icon">🌡️</span>
+              <p><strong>Temperature:</strong> {{ sensor.temperature }} °C</p>
+            </div>
+            <div class="sensor-data">
+              <span class="icon">💧</span>
+              <p><strong>Humidity:</strong> {{ sensor.humidity }} %</p>
+            </div>
+            <div class="sensor-data">
+              <span class="icon">🌬️</span>
+              <p><strong>Pressure:</strong> {{ sensor.pressure }} hPa</p>
+            </div>
+            <div class="sensor-data">
+              <span class="icon">💡</span>
+              <p><strong>Luminosity:</strong> {{ sensor.luminosity }} lx</p>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -63,7 +76,7 @@ export default {
 <style scoped>
 .dashboard-container {
   padding: 20px;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
   background-color: #f0f4f8;
   border-radius: 8px;
@@ -81,13 +94,21 @@ p {
   color: #666;
 }
 
+.rooms-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
 .room-card {
   background-color: #fff;
-  margin-bottom: 20px;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex: 1 1 300px;
+  max-width: 300px;
 }
 
 .room-card h3 {
@@ -109,8 +130,19 @@ p {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.sensor-data {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.sensor-data .icon {
+  font-size: 1.5rem;
+  margin-right: 10px;
+}
+
 .sensor-item p {
-  margin: 5px 0;
+  margin: 0;
   color: #333;
 }
 
