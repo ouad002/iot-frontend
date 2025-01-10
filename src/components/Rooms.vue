@@ -2,16 +2,18 @@
   <div class="rooms-container">
     <h2>Rooms</h2>
     <button class="create-button" @click="createRoom">Create Room</button>
-    <ul class="room-list">
-      <li v-for="room in rooms" :key="room.id" class="room-item">
+    <div class="room-list">
+      <div v-for="room in rooms" :key="room.id" class="room-card">
         <p><strong>Name:</strong> {{ room.name }}</p>
         <p><strong>Surface:</strong> {{ room.surface }} m²</p>
         <p><strong>Number of Windows:</strong> {{ room.windows }}</p>
         <p><strong>Sensor:</strong> {{ room.sensor }}</p>
-        <button class="edit-button" @click="editRoom(room.id)">Edit</button>
-        <button class="delete-button" @click="deleteRoom(room.id)">Delete</button>
-      </li>
-    </ul>
+        <div class="button-group">
+          <button class="edit-button" @click="editRoom(room.id)">Edit</button>
+          <button class="delete-button" @click="deleteRoom(room.id)">Delete</button>
+        </div>
+      </div>
+    </div>
     <router-view @add-room="addRoom" @update-room="updateRoom"></router-view>
   </div>
 </template>
@@ -69,8 +71,17 @@ export default {
 <style scoped>
 .rooms-container {
   padding: 20px;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
+  background-color: #f0f4f8;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
 }
 
 .create-button {
@@ -80,6 +91,9 @@ export default {
   border: none;
   cursor: pointer;
   margin-bottom: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .create-button:hover {
@@ -87,16 +101,30 @@ export default {
 }
 
 .room-list {
-  list-style-type: none;
-  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 }
 
-.room-item {
-  background-color: #f9f9f9;
-  margin-bottom: 10px;
-  padding: 10px;
+.room-card {
+  background-color: #fff;
+  padding: 20px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex: 1 1 300px;
+  max-width: 300px;
+}
+
+.room-card p {
+  margin: 10px 0;
+  color: #333;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
 }
 
 .edit-button, .delete-button {
@@ -105,7 +133,7 @@ export default {
   padding: 5px 10px;
   border: none;
   cursor: pointer;
-  margin-right: 5px;
+  border-radius: 4px;
 }
 
 .delete-button {
