@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -36,20 +38,24 @@ export default {
       this.loading = true;
       this.error = '';
 
-      // Simulate backend login process with hardcoded credentials
-      const validUsername = 'admin';
-      const validPassword = 'adminpass';
-
-      setTimeout(() => {
-        if (this.username === validUsername && this.password === validPassword) {
-          // Simulate a successful login and set loggedIn in localStorage
-          localStorage.setItem('loggedIn', 'true');
-          this.$router.push('/dashboard');  // Navigate to the dashboard
-        } else {
-          this.error = 'Invalid credentials, please try again.';
+      // Make a request to the backend for authentication
+      axios.get('http://localhost:8000/api/rooms', {
+        auth: {
+          username: this.username,
+          password: this.password
         }
+      })
+      .then(() => {
+        // Simulate a successful login and set loggedIn in localStorage
+        localStorage.setItem('loggedIn', 'true');
+        this.$router.push('/dashboard');  // Navigate to the dashboard
+      })
+      .catch(() => {
+        this.error = 'Invalid credentials, please try again.';
+      })
+      .finally(() => {
         this.loading = false;
-      }, 1000); // Simulate a delay for the login process (like an API request)
+      });
     }
   }
 };
