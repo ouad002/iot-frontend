@@ -44,6 +44,7 @@ export default {
   },
   created() {
     this.fetchRoomData();
+    this.setupWebSocket();
   },
   methods: {
     fetchRoomData() {
@@ -83,6 +84,26 @@ export default {
         }
       });
       return Object.values(latestSensorData);
+    },
+    setupWebSocket() {
+      const socket = new WebSocket('ws://localhost:8000/ws');
+      socket.onmessage = (event) => {
+        const newSensorData = JSON.parse(event.data);
+        this.updateSensorData(newSensorData);
+      };
+    },
+    updateSensorData(newSensorData) {
+      const room = this.rooms.find(r => r.id === newSensorData.room);
+      if (room) {
+        const sensorIndex = room.sensors.findIndex(sensor => sensor.id === newSensorData.id);
+        if (sensorIndex !== -1) {
+          // Update existing sensor data
+          this.$set(room.sensors, sensorIndex, newSensorData);
+        } else {
+          // Add new sensor data
+          room.sensors.push(newSensorData);
+        }
+      }
     }
   }
 };
