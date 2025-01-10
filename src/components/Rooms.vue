@@ -14,6 +14,23 @@
         </div>
       </div>
     </div>
+    <button class="mqtt-button" @click="showMqttPublisher = true">Publish to MQTT</button>
+    <div v-if="showMqttPublisher" class="mqtt-publisher">
+      <h2>MQTT Publisher</h2>
+      <form @submit.prevent="publishMessage">
+        <div>
+          <label for="room">Room ID:</label>
+          <input type="number" id="room" v-model="roomId" required />
+        </div>
+        <div>
+          <label for="message">Message:</label>
+          <textarea id="message" v-model="message" required></textarea>
+        </div>
+        <button type="submit">Publish</button>
+        <button type="button" @click="showMqttPublisher = false">Cancel</button>
+      </form>
+      <p v-if="response">{{ response }}</p>
+    </div>
     <router-view @add-room="addRoom" @update-room="updateRoom"></router-view>
   </div>
 </template>
@@ -24,7 +41,11 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      rooms: []
+      rooms: [],
+      showMqttPublisher: false,
+      roomId: '',
+      message: '',
+      response: ''
     };
   },
   created() {
@@ -63,6 +84,24 @@ export default {
       if (index !== -1) {
         this.rooms.splice(index, 1, updatedRoom);
       }
+    },
+    publishMessage() {
+      const topic = `rooms/message`;
+      const payload = {
+        room: this.roomId,
+        message: this.message
+      };
+
+      axios.post('http://localhost:8000/mqtt/publish', payload, {
+        params: { topic }
+      })
+      .then(response => {
+        this.response = response.data;
+      })
+      .catch(error => {
+        console.error('Error publishing message:', error);
+        this.response = 'Error publishing message';
+      });
     }
   }
 };
@@ -84,7 +123,7 @@ h2 {
   margin-bottom: 20px;
 }
 
-.create-button {
+.create-button, .mqtt-button {
   background-color: #4CAF50;
   color: white;
   padding: 10px 20px;
@@ -96,7 +135,7 @@ h2 {
   margin-right: auto;
 }
 
-.create-button:hover {
+.create-button:hover, .mqtt-button:hover {
   background-color: #45a049;
 }
 
@@ -146,6 +185,48 @@ h2 {
 
 .delete-button:hover {
   background-color: #da190b;
+}
+
+.mqtt-publisher {
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form div {
+  margin-bottom: 10px;
+}
+
+form label {
+  margin-bottom: 5px;
+}
+
+form input, form textarea {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+form button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+form button:hover {
+  background-color: #0056b3;
 }
 </style>
   

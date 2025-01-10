@@ -27,6 +27,7 @@ const routes = [
     component: RoomForm,
     meta: { requiresAuth: true } // Require login
   }
+
 ];
 
 const router = createRouter({
